@@ -1,5 +1,7 @@
 #include "movement.h"
 
+#define STATUS_SIZE 2
+
 // I dunno if there's a nicer way to do this
 int mv_actor(int mv, struct actor *actor)
 {
@@ -81,25 +83,44 @@ int main()
     jef.row = 4;
     jef.col = 4;
 
+    // curses initialization
     initscr();
     raw();
     keypad(stdscr, TRUE);
     noecho();
     curs_set(0);
-    printw("peepee moments");
-    mvaddch(jef.row, jef.col, '@');
 
+    // initialize windows
+    WINDOW *main_w = newwin((LINES - STATUS_SIZE), COLS, 0, 0);
+    box(main_w, 0, 0);
+    WINDOW *statusline = newwin(STATUS_SIZE, COLS, (LINES - STATUS_SIZE), 0);
+
+    // some initial output
+    wprintw(main_w, "LINES: %d COLS: %d", LINES, COLS);
+    mvaddch(jef.row, jef.col, '@');
+    mvwprintw(statusline, 0, 0, "initialized");
+    //wrefresh(main_w);
+    //wrefresh(statusline);
+        // why doesn't it display if I uncomment these
+
+    // main movement loop
     while(ch != ' ') {
         ch = getch();
         if(dkey(ch)) {
-            mvaddch(jef.row, jef.col, ' ');
+            mvwaddch(main_w, jef.row, jef.col, ' '); //clear old @
             s = mv_actor(dkey(ch), &jef);
+
+            if(s) mvwprintw(statusline, 0, 0, "you died");
+            else  wclear(statusline);
         }
-        mvaddch(jef.row, jef.col, '@');
-        if(s) printw("you died");
-        refresh();
+        mvwaddch(main_w, jef.row, jef.col, '@');
+        box(main_w, 0, 0);
+
+        wrefresh(main_w);
+        wrefresh(statusline);
     }
 
+    // curses is done
     endwin();
     return 0;
 }
