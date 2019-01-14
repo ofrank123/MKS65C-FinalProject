@@ -75,6 +75,30 @@ int valid_pos(struct actor *actor)
         ;
 }
 
+int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
+  int ch = getch();
+  int s;
+  if(dkey(ch)) {
+    mvwaddch(main_w, jef->row, jef->col, ' '); //clear old @
+    s = mv_actor(dkey(ch), jef);
+
+    if(s) mvwprintw(statusline, 0, 0, "you died");
+    else  wclear(statusline);
+  }
+  else if(ch == 27) {
+    return 0;
+  }
+  return 1;
+}
+
+void draw(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
+  mvwaddch(main_w, jef->row, jef->col, '@');
+  box(main_w, 0, 0);
+
+  wrefresh(main_w);
+  wrefresh(statusline);
+}
+
 int main()
 {
     int s;
@@ -99,26 +123,16 @@ int main()
     wprintw(main_w, "LINES: %d COLS: %d", LINES, COLS);
     mvaddch(jef.row, jef.col, '@');
     mvwprintw(statusline, 0, 0, "initialized");
-    //wrefresh(main_w);
-    //wrefresh(statusline);
+    wrefresh(main_w);
+    wrefresh(statusline);
         // why doesn't it display if I uncomment these
 
+    char running = 1;
     // main movement loop
-    while(ch != ' ') {
-        ch = getch();
-        if(dkey(ch)) {
-            mvwaddch(main_w, jef.row, jef.col, ' '); //clear old @
-            s = mv_actor(dkey(ch), &jef);
-
-            if(s) mvwprintw(statusline, 0, 0, "you died");
-            else  wclear(statusline);
-        }
-        mvwaddch(main_w, jef.row, jef.col, '@');
-        box(main_w, 0, 0);
-
-        wrefresh(main_w);
-        wrefresh(statusline);
-    }
+    while(running) {
+      running = input_handler(&jef, main_w, statusline);
+      draw(&jef, main_w, statusline);
+   }
 
     // curses is done
     endwin();
