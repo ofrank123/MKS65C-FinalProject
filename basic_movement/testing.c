@@ -124,7 +124,6 @@ int main()
     refresh(); // let's not make that mistake again
 
     // some initial output
-    wprintw(field, "LINES: %d COLS: %d", LINES, COLS);
     mvaddch(jef.row, jef.col, '@');
     mvwprintw(statusline, 0, 0, "initialized");
     box(field, 0, 0);
