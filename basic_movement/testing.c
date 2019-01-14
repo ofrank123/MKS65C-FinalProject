@@ -82,7 +82,7 @@ int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
     mvwaddch(main_w, jef->row, jef->col, ' '); //clear old @
     s = mv_actor(dkey(ch), jef);
 
-    if(s) mvwprintw(statusline, 0, 0, "you died");
+    if(s) mvwprintw(statusline, 1, 1, "you died");
     else  wclear(statusline);
   }
   else if(ch == 27) {
@@ -153,8 +153,8 @@ int main()
             }
             else {
                 wclear(field);
-                wprintw(field, "Your window is too small! Please use at least");
-                wprintw(field, "an 80x24 terminal. (You have %ix%i.)",
+                mvwprintw(field, 1, 1, "Your window is too small!");
+                mvwprintw(field, 3, 1, "Use 80x24 pls. (You have %ix%i.)",
                                 term_x, term_y);
                 wrefresh(field);
             }
