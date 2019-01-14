@@ -94,6 +94,7 @@ int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
 void draw(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
   mvwaddch(main_w, jef->row, jef->col, '@');
   box(main_w, 0, 0);
+  box(statusline, 0, 0);
 
   wrefresh(main_w);
   wrefresh(statusline);
@@ -101,8 +102,9 @@ void draw(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
 
 int main()
 {
+    int term_y, term_x, new_y, new_x;
     int s;
-    int ch = 'e';
+    int ch = '\0';
     struct actor jef;
     jef.row = 4;
     jef.col = 4;
@@ -113,26 +115,54 @@ int main()
     keypad(stdscr, TRUE);
     noecho();
     curs_set(0);
+    nodelay(stdscr, TRUE);
 
     // initialize windows
-    WINDOW *main_w = newwin((LINES - STATUS_SIZE), COLS, 0, 0);
-    box(main_w, 0, 0);
-    WINDOW *statusline = newwin(STATUS_SIZE, COLS, (LINES - STATUS_SIZE), 0);
+    getmaxyx(stdscr, term_y, term_x);
+    WINDOW *field = newwin((term_y - 3), term_x, 0, 0);
+    WINDOW *statusline = newwin(3, term_x, (term_y - 3), 0);
+    refresh(); // let's not make that mistake again
 
     // some initial output
-    wprintw(main_w, "LINES: %d COLS: %d", LINES, COLS);
+    wprintw(field, "LINES: %d COLS: %d", LINES, COLS);
     mvaddch(jef.row, jef.col, '@');
     mvwprintw(statusline, 0, 0, "initialized");
-    wrefresh(main_w);
+    box(field, 0, 0);
+    box(statusline, 0, 0);
+    wrefresh(field);
     wrefresh(statusline);
-        // why doesn't it display if I uncomment these
 
     char running = 1;
+
     // main movement loop
     while(running) {
-      running = input_handler(&jef, main_w, statusline);
-      draw(&jef, main_w, statusline);
-   }
+        // resize windows (this needs to be compartmentalized)
+        getmaxyx(stdscr, new_y, new_x);
+        if(new_y != term_y || new_x != term_x) {
+            term_y = new_y;
+            term_x = new_x;
+            if(term_y >= 24 && term_x >= 80) {
+                wresize(field, (term_y - 3), term_x);
+                wresize(statusline, 3, term_x);
+                mvwin(statusline, (term_y - 3), 0);
+                wclear(stdscr);
+                wclear(field);
+                wclear(statusline);
+                box(field, 0, 0);
+                box(statusline, 0, 0);
+            }
+            else {
+                wclear(field);
+                wprintw(field, "Your window is too small! Please use at least");
+                wprintw(field, "an 80x24 terminal. (You have %ix%i.)",
+                                term_x, term_y);
+                wrefresh(field);
+            }
+        }
+
+        running = input_handler(&jef, field, statusline);
+        draw(&jef, field, statusline);
+    }
 
     // curses is done
     endwin();
