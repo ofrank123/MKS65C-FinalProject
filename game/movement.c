@@ -135,6 +135,22 @@ void enter_move(struct actor *pl)
 
 int build_tile(struct actor *pl, struct map *m)
 {
+    // "real" cursor coords
+    int real_cz = pl->cursor_z + pl->z;
+    int real_cx = pl->cursor_x + pl->x;
+
+    char *target_block = m->arr[pl->view_y][real_cz] + real_cx;
+
+    // break block
+    if(*target_block == '1') {
+        *target_block = '0';
+        return 1;
+    }
+    // place block
+    if(*target_block == '0') {
+        *target_block = '1';
+        return -1;
+    }
     return 0;
 }
 
@@ -214,8 +230,8 @@ int input_handler(struct actor *jef, struct map *m,
                     m->arr[jef->y][jef->z][jef->x]); // value there
 
         } else if(jef->mode == MODE_BUILD) {
-            real_cz = jef->cursor_z + jef->z;
-            real_cx = jef->cursor_x + jef->x;
+            real_cz = jef->cursor_z + jef->z; // real cursor z
+            real_cx = jef->cursor_x + jef->x; // real cursor x
             wclear(statusline);
             mvwprintw(statusline, 1, 1,
                     "[BUILD %+i] X:%i Y:%i Z:%i MapVal:%i",
