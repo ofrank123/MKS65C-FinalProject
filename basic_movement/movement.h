@@ -6,6 +6,7 @@
 #include <string.h>
 #include <ncurses.h>
 #include "player.h"
+#include "map.h"
 
 #define KEY_MV_N	9
 #define KEY_MV_S	1
@@ -16,12 +17,13 @@
 #define KEY_MV_NW	6
 #define KEY_MV_SW	7
 
-int valid_pos(struct actor *);
+int valid_pos(struct actor *, struct map *);
 
-int mv_actor(int mv, struct actor *);
+int mv_actor(int mv, struct actor *, struct map *);
 
 int dkey(int ch);
 
-int input_handler(struct actor * player, WINDOW * field, WINDOW * statusline);
+int input_handler(struct actor *player, struct map *m,
+                  WINDOW *field, WINDOW *statusline);
 
 #endif

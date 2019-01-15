@@ -2,7 +2,6 @@
 #include "draw.h"
 #include "player.h"
 
-#define STATUS_SIZE 2
 
 int main()
 {
@@ -10,8 +9,9 @@ int main()
     int s;
     int ch = '\0';
     struct actor jef;
-    jef.z = 4;
-    jef.x = 4;
+    jef.z = 100;
+    jef.x = 100;
+    jef.y = 4;
 
     // curses initialization
     initscr();
@@ -27,12 +27,17 @@ int main()
     WINDOW *statusline = newwin(3, term_x, (term_y - 3), 0);
     refresh(); // let's not make that mistake again
 
+    // import map
+    struct map *main_map = read_map("map.m");
+    //struct map *main_map = NULL;
+
     // some initial output
     wprintw(field, "LINES: %d XS: %d", term_x, term_y);
     mvaddch(jef.z, jef.x, '@');
     mvwprintw(statusline, 0, 0, "initialized");
     box(field, 0, 0);
     box(statusline, 0, 0);
+    draw_map(&jef, main_map, field);
     wrefresh(field);
     wrefresh(statusline);
 
@@ -63,11 +68,12 @@ int main()
                 wrefresh(field);
             }
         }
-        running = input_handler(&jef, field, statusline);
-        draw(&jef, field, statusline);
+        running = input_handler(&jef, main_map, field, statusline);
+        draw(&jef, main_map, field, statusline);
     }
 
     // curses is done
+    free_map(main_map);
     endwin();
     return 0;
 }

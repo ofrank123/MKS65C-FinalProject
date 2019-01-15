@@ -1,7 +1,7 @@
 #include "movement.h"
 
 // I dunno if there's a nicer way to do this
-int mv_actor(int mv, struct actor *actor)
+int mv_actor(int mv, struct actor *actor, struct map *m)
 {
     int s = 0;
     // backup
@@ -38,7 +38,7 @@ int mv_actor(int mv, struct actor *actor)
             --(actor->x);
             break;
     }
-    if(!valid_pos(actor)) {
+    if(!valid_pos(actor, m)) {
         s = 1;
         actor->z = b_z;
         actor->x = b_x;
@@ -63,22 +63,24 @@ int dkey(int ch)
 }
 // anyway the idea is it'll be hopefully easy to add more keybinds and stuff
 
-int valid_pos(struct actor *actor)
+int valid_pos(struct actor *actor, struct map *m)
 {
     return
-        actor->z != 0
-        && actor->x != 0
-        && actor->z != 24
-        && actor->x != 80
+        actor->z >= 0
+        && actor->x >= 0
+        && actor->z <= m->z_size
+        && actor->x <= m->x_size
         ;
+        // I will ideologically defend this hanging semicolon --Yoshi
 }
 
-int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
+int input_handler(struct actor *jef, struct map *m,
+                  WINDOW *main_w, WINDOW *statusline) {
   int ch = getch();
   int s;
   if(dkey(ch)) {
     mvwaddch(main_w, jef->z, jef->x, ' '); //clear old @
-    s = mv_actor(dkey(ch), jef);
+    s = mv_actor(dkey(ch), jef, m);
 
     if(s) mvwprintw(statusline, 1, 1, "edge of the world");
     else  wclear(statusline);

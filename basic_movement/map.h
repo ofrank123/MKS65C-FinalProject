@@ -1,3 +1,6 @@
+#ifndef MAP_H
+#define MAP_H
+
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
@@ -17,3 +20,5 @@ void free_map(struct map *m);
 char **split(char *line, char *delims);
 
 struct map *read_map(char *filename);
+
+#endif
