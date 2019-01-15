@@ -68,8 +68,8 @@ int valid_pos(struct actor *actor, struct map *m)
     return
         actor->z >= 0
         && actor->x >= 0
-        && actor->z <= m->z_size
-        && actor->x <= m->x_size
+        && actor->z <= m->z_size - 1
+        && actor->x <= m->x_size - 1
         ;
         // I will ideologically defend this hanging semicolon --Yoshi
 }
