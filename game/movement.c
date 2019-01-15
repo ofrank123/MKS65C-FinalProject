@@ -13,6 +13,8 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
     // backup
     int b_z = actor->z;
     int b_x = actor->x;
+    int b_y = actor->y;
+    int b_vy = actor->view_y;
 
     switch(mv)  {
         case KEY_MV_NE:
@@ -44,11 +46,7 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
             --(actor->x);
             break;
     }
-    if(!within_limits(actor, m)) {
-        s = 1;
-        actor->z = b_z;
-        actor->x = b_x;
-    }
+    
     if(m->arr[actor->y][actor->z][actor->x] == '1') {
       // step up
       if(m->arr[(actor->y) - 1][actor->z][actor->x] == '0') {
@@ -60,6 +58,8 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
         s=1;
         actor->z = b_z;
         actor->x = b_x;
+        actor->y = b_y;
+        actor->view_y = b_vy;
       }
     }
     if(m->arr[actor->y][actor->z][actor->x] == '0') {
@@ -69,6 +69,13 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
             (actor->view_y)++;
         (actor->y)++;
       }
+    }
+    if(!within_limits(actor, m)) {
+      s = 1;
+      actor->z = b_z;
+      actor->x = b_x;
+      actor->y = b_y;
+      actor->view_y = b_vy;
     }
     return s;
 }
@@ -178,12 +185,14 @@ int dkey(int ch)
 
 int within_limits(struct actor *actor, struct map *m)
 {
-    return
-        actor->z >= 0
-        && actor->x >= 0
-        && actor->z <= m->z_size - 1
-        && actor->x <= m->x_size - 1
-        ;
+  return
+    actor->z >= 0
+    && actor->x >= 0
+    && actor->y > 0
+    && actor->z <= m->z_size - 1
+    && actor->x <= m->x_size - 1
+    && actor->y <= m->y_size - 1
+    ;
         // I will ideologically defend this hanging semicolon --Yoshi
 }
 
@@ -217,7 +226,7 @@ int input_handler(struct actor *jef, struct map *m,
                 --(jef->view_y);
         }
         else if(d == KEY_VDOWN) {
-            if(jef->view_y < m->y_size - 1)
+            if(jef->view_y < m->y_size - 2)
                 ++(jef->view_y);
         }
 

@@ -20,6 +20,10 @@ void draw(struct actor *player, struct map *m,
     wrefresh(main_w);
 }
 
+void draw_char(WINDOW * field, struct map * m, int dz, int dx, int x, int y, int z) {
+  mvwaddch(field, dz, dx, m->arr[y][z][x]);
+}
+
 // draw map to main window, centered around player (doesn't refresh)
 void draw_map(struct actor *pl, struct map *m, WINDOW *field)
 {
@@ -63,8 +67,8 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     int x, z;
     for(z = 0; z < field_z; ++z) {
         for(x = 0; x < field_x; ++x) {
-            mvwaddch(field, 1+z, 1+x,
-                    m->arr[pl->view_y][view_z + z][view_x + x]);
+          //mvwaddch(field, 1+z, 1+x, m->arr[pl->view_y][view_z + z][view_x + x]);
+            draw_char(field, m, 1+z, 1+x, view_x + x, pl->view_y, view_z + z);
                         /* THIS USES pl->view_y */
         }
     }
