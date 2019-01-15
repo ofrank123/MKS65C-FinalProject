@@ -1,4 +1,5 @@
 #include "movement.h"
+#include "draw.h"
 
 #define STATUS_SIZE 2
 
@@ -7,43 +8,43 @@ int mv_actor(int mv, struct actor *actor)
 {
     int s = 0;
     // backup
-    int b_row = actor->row;
-    int b_col = actor->col;
+    int b_z = actor->z;
+    int b_x = actor->x;
 
     switch(mv)  {
         case KEY_MV_NE:
-            --(actor->row);
-            ++(actor->col);
+            --(actor->z);
+            ++(actor->x);
             break;
         case KEY_MV_SE:
-            ++(actor->row);
-            ++(actor->col);
+            ++(actor->z);
+            ++(actor->x);
             break;
         case KEY_MV_NW:
-            --(actor->row);
-            --(actor->col);
+            --(actor->z);
+            --(actor->x);
             break;
         case KEY_MV_SW:
-            ++(actor->row);
-            --(actor->col);
+            ++(actor->z);
+            --(actor->x);
             break;
         case KEY_MV_N:
-            --(actor->row);
+            --(actor->z);
             break;
         case KEY_MV_S:
-            ++(actor->row);
+            ++(actor->z);
             break;
         case KEY_MV_E:
-            ++(actor->col);
+            ++(actor->x);
             break;
         case KEY_MV_W:
-            --(actor->col);
+            --(actor->x);
             break;
     }
     if(!valid_pos(actor)) {
         s = 1;
-        actor->row = b_row;
-        actor->col = b_col;
+        actor->z = b_z;
+        actor->x = b_x;
     }
     return s;
 }
@@ -68,10 +69,10 @@ int dkey(int ch)
 int valid_pos(struct actor *actor)
 {
     return
-        actor->row != 0
-        && actor->col != 0
-        && actor->row != 24
-        && actor->col != 80
+        actor->z != 0
+        && actor->x != 0
+        && actor->z != 24
+        && actor->x != 80
         ;
 }
 
@@ -79,7 +80,7 @@ int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
   int ch = getch();
   int s;
   if(dkey(ch)) {
-    mvwaddch(main_w, jef->row, jef->col, ' '); //clear old @
+    mvwaddch(main_w, jef->z, jef->x, ' '); //clear old @
     s = mv_actor(dkey(ch), jef);
 
     if(s) mvwprintw(statusline, 1, 1, "you died");
@@ -91,23 +92,14 @@ int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
   return 1;
 }
 
-void draw(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
-  mvwaddch(main_w, jef->row, jef->col, '@');
-  box(main_w, 0, 0);
-  box(statusline, 0, 0);
-
-  wrefresh(main_w);
-  wrefresh(statusline);
-}
-
 int main()
 {
     int term_y, term_x, new_y, new_x;
     int s;
     int ch = '\0';
     struct actor jef;
-    jef.row = 4;
-    jef.col = 4;
+    jef.z = 127;
+    jef.x = 127;
 
     // curses initialization
     initscr();
@@ -124,7 +116,8 @@ int main()
     refresh(); // let's not make that mistake again
 
     // some initial output
-    mvaddch(jef.row, jef.col, '@');
+    wprintw(field, "LINES: %d XS: %d", term_x, term_y);
+    mvaddch(jef.z, jef.x, '@');
     mvwprintw(statusline, 0, 0, "initialized");
     box(field, 0, 0);
     box(statusline, 0, 0);
