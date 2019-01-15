@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ncurses.h>
+#include "player.h"
 
 #define KEY_MV_N	9
 #define KEY_MV_S	1
@@ -15,15 +16,12 @@
 #define KEY_MV_NW	6
 #define KEY_MV_SW	7
 
-struct actor
-{
-  int x, y, z;
-};
-
 int valid_pos(struct actor *);
 
 int mv_actor(int mv, struct actor *);
 
 int dkey(int ch);
+
+int input_handler(struct actor * player, WINDOW * field, WINDOW * statusline);
 
 #endif
