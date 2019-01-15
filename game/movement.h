@@ -16,10 +16,25 @@
 #define KEY_MV_SE	5
 #define KEY_MV_NW	6
 #define KEY_MV_SW	7
+#define KEY_BUILD	10
+#define KEY_MMOVE   11
+#define KEY_MEDIT   12
+#define KEY_VDOWN   13
+#define KEY_VUP     14
 
-int valid_pos(struct actor *, struct map *);
+int within_limits(struct actor *, struct map *);
+
+int cursor_dist(struct actor *);
 
 int mv_actor(int mv, struct actor *, struct map *);
+
+int mv_cursor(int mv, struct actor *, struct map *);
+
+void enter_build(struct actor *);
+
+void enter_move (struct actor *);
+
+int build_tile(struct actor *, struct map *);
 
 int dkey(int ch);
 

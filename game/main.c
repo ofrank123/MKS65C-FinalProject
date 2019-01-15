@@ -14,6 +14,8 @@ int main()
     jef.z = 100;
     jef.x = 100;
     jef.y = 4;
+    jef.view_y = 4;
+    jef.mode = MODE_MOVE;
 
     setlocale(LC_ALL, "");
 
@@ -52,7 +54,7 @@ int main()
         if(new_y != term_y || new_x != term_x) {
             term_y = new_y;
             term_x = new_x;
-            if(term_y >= 24 && term_x >= 80) {
+            if(term_y >= 15 && term_x >= 60) {
                 wresize(field, (term_y - 3), term_x);
                 wresize(statusline, 3, term_x);
                 mvwin(statusline, (term_y - 3), 0);
@@ -65,13 +67,11 @@ int main()
             else {
                 wclear(field);
                 mvwprintw(field, 1, 1, "Your window is too small!");
-                mvwprintw(field, 3, 1, "Use 80x24 pls. (You have %ix%i.)",
+                mvwprintw(field, 3, 1, "Use 60x15 pls. (You have %ix%i.)",
                                 term_x, term_y);
                 wrefresh(field);
             }
         }
-        mvwprintw(statusline, 1, 1, "X: %i, Y: %i, Z: %i MapVal: %i", jef.x, jef.y, jef.z, main_map->arr[jef.y][jef.z][jef.x]);
-        wrefresh(statusline);
         running = input_handler(&jef, main_map, field, statusline);
         draw(&jef, main_map, field, statusline);
     }
