@@ -50,7 +50,10 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
         actor->x = b_x;
     }
     if(m->arr[actor->y][actor->z][actor->x] == '1') {
+      // step up
       if(m->arr[(actor->y) - 1][actor->z][actor->x] == '0') {
+        if(actor->view_y == actor->y)
+            (actor->view_y)--;
         (actor->y)--;
       }
       else {
@@ -60,7 +63,10 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
       }
     }
     if(m->arr[actor->y][actor->z][actor->x] == '0') {
+      // step down
       if(m->arr[(actor->y) + 1][actor->z][actor->x] == '0') {
+        if(actor->view_y == actor->y)
+            (actor->view_y)++;
         (actor->y)++;
       }
     }
@@ -201,24 +207,21 @@ int input_handler(struct actor *jef, struct map *m,
 
         if(jef->mode == MODE_MOVE) {
             wclear(statusline);
-            if(jef->y == jef->view_y)
-                mvwprintw(statusline, 1, 1,
-                        "[MOVE]  X:%i Y:%i Z:%i MapVal:%i",
-                        jef->x, jef->y, jef->z, m->arr[jef->y][jef->z][jef->x]);
-            else
-                mvwprintw(statusline, 1, 1,
-                        "[VIEW %+i]  X:%i Y:%i Z:%i MapVal:%i",
-                        (jef->y - jef->view_y),
-                        jef->x, jef->y, jef->z, m->arr[jef->y][jef->z][jef->x]);
+            mvwprintw(statusline, 1, 1,
+                    "[MOVE %+i]  X:%i Y:%i Z:%i MapVal:%i",
+                    (jef->y - jef->view_y), // view level difference
+                    jef->x, jef->y, jef->z, // player coords
+                    m->arr[jef->y][jef->z][jef->x]); // value there
 
         } else if(jef->mode == MODE_BUILD) {
             real_cz = jef->cursor_z + jef->z;
             real_cx = jef->cursor_x + jef->x;
             wclear(statusline);
             mvwprintw(statusline, 1, 1,
-                    "[BUILD] X:%i Y:%i Z:%i MapVal:%i",
-                    real_cx, jef->y, real_cz,
-                    m->arr[jef->y][real_cz][real_cx]);
+                    "[BUILD %+i] X:%i Y:%i Z:%i MapVal:%i",
+                    (jef->y - jef->view_y),   // view level difference
+                    real_cx, jef->view_y, real_cz,  // cursor x,y,z
+                    m->arr[jef->view_y][real_cz][real_cx]);  //value there
         }
     }
     else if(ch == 27) {
