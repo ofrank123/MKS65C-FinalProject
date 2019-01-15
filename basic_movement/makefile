@@ -1,5 +1,5 @@
-all : main.o draw.o movement.o player.h
-	gcc main.o draw.o movement.o -lncurses
+all : main.o draw.o movement.o map.o player.h
+	gcc main.o draw.o movement.o map.o -lncurses
 
 main.o : main.c
 	gcc -c main.c -lncurses
@@ -9,6 +9,9 @@ draw.o : draw.c draw.h
 
 movement.o : movement.c movement.h
 	gcc -c movement.c -lncurses
+
+map.o: map.c map.h
+	gcc -c map.c
 
 run : a.out
 	./a.out
