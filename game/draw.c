@@ -29,13 +29,13 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     field_z -= 2;
     field_x -= 2;
 
-    int pl_z = field_z / 2;
-    int pl_x = field_x / 2;
+    int pl_z = (field_z + 1) / 2;
+    int pl_x = (field_x + 1) / 2;
     // now that's what I call elegant coding
     
     // find the viewport's real coords (on map)
-    int view_z = pl->z - (field_z / 2);
-    int view_x = pl->x - (field_x / 2);
+    int view_z = pl->z - (field_z) / 2 + 1;
+    int view_x = pl->x - (field_x) / 2;
 
     // check for edge cases (haha pun)
     // z edges
@@ -55,7 +55,7 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     }
     else if(view_x + field_x >= m->x_size) {
         pl_x += (view_x + field_x) - m->x_size + 1;
-        view_x = m->x_size - field_x - 1;
+        view_x = m->x_size - field_x;
     }
 
     // now draw the viewport
