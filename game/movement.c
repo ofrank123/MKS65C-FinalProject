@@ -64,7 +64,7 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
     }
     if(m->arr[actor->y][actor->z][actor->x] == '0') {
       // step down
-      if(m->arr[(actor->y) + 1][actor->z][actor->x] == '0') {
+      while(m->arr[(actor->y) + 1][actor->z][actor->x] == '0') {
         if(actor->view_y == actor->y)
             (actor->view_y)++;
         (actor->y)++;
