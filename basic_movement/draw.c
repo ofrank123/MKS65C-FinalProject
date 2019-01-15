@@ -43,18 +43,18 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
         pl_z += view_z + 1;
         view_z = 0;
     }
-    else if(view_z + field_z > m->z_size) {
-        pl_z += (view_z + field_z) - m->z_size;
-        view_z = m->z_size - field_z;
+    else if(view_z + field_z >= m->z_size) {
+        pl_z += (view_z + field_z) - m->z_size + 1;
+        view_z = m->z_size - field_z - 1;
     }
     // x edges
-    if(view_x <= 0) {
+    if(view_x < 0) {
         pl_x += view_x + 1;
         view_x = 0;
     }
-    else if(view_x + field_x > m->x_size) {
-        pl_x += (view_x + field_x) - m->x_size;
-        view_x = m->x_size - field_x;
+    else if(view_x + field_x >= m->x_size) {
+        pl_x += (view_x + field_x) - m->x_size + 1;
+        view_x = m->x_size - field_x - 1;
     }
 
     // now draw the viewport
