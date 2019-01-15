@@ -45,7 +45,6 @@ int main()
     wrefresh(statusline);
 
     char running = 1;
-
     // main movement loop
     while(running) {
         // resize windows (this needs to be compartmentalized)
@@ -71,7 +70,7 @@ int main()
                 wrefresh(field);
             }
         }
-        mvwprintw(statusline, 1, 1, "X: %i, Z: %i MapVal: %i", jef.x, jef.z, main_map->arr[jef.y][jef.z][jef.x]);
+        mvwprintw(statusline, 1, 1, "X: %i, Y: %i, Z: %i MapVal: %i", jef.x, jef.y, jef.z, main_map->arr[jef.y][jef.z][jef.x]);
         wrefresh(statusline);
         running = input_handler(&jef, main_map, field, statusline);
         draw(&jef, main_map, field, statusline);

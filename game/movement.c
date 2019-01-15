@@ -43,6 +43,21 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
         actor->z = b_z;
         actor->x = b_x;
     }
+    if(m->arr[actor->y][actor->z][actor->x] == '1') {
+      if(m->arr[(actor->y) - 1][actor->z][actor->x] == '0') {
+        (actor->y)--;
+      }
+      else {
+        s=1;
+        actor->z = b_z;
+        actor->x = b_x;
+      }
+    }
+    if(m->arr[actor->y][actor->z][actor->x] == '0') {
+      if(m->arr[(actor->y) + 1][actor->z][actor->x] == '0') {
+        (actor->y)++;
+      }
+    }
     return s;
 }
 
