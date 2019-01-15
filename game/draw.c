@@ -29,8 +29,8 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     field_z -= 2;
     field_x -= 2;
 
-    int pl_z = (field_z + 1) / 2;
-    int pl_x = (field_x + 1) / 2;
+    int pl_z = field_z / 2;
+    int pl_x = field_x / 2;
     // now that's what I call elegant coding
     
     // find the viewport's real coords (on map)
@@ -41,7 +41,7 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     // z edges
     if(view_z < 0) {
         // limit the viewport to the edge and push the player display instead
-        pl_z += view_z + 1;
+        pl_z += view_z;
         view_z = 0;
     }
     else if(view_z + field_z >= m->z_size) {
@@ -50,12 +50,12 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     }
     // x edges
     if(view_x < 0) {
-        pl_x += view_x + 1;
+        pl_x += view_x;
         view_x = 0;
     }
     else if(view_x + field_x >= m->x_size) {
         pl_x += (view_x + field_x) - m->x_size + 1;
-        view_x = m->x_size - field_x;
+        view_x = m->x_size - field_x - 1;
     }
 
     // now draw the viewport

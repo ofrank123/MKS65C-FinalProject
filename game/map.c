@@ -48,7 +48,7 @@ struct map *read_map(char *filename)
     for(y = 0; y < y_size; ++y) {
         map[y] = malloc(sizeof(char *) * z_size);
         // printf("beginning y layer %i\n", y);
-        for(z = 0; z < z_size; ++z) {
+        for(z = 0; z < z_size + 1; ++z) {
             map[y][z] = malloc(sizeof(char) * x_size);
             fgets(map[y][z], x_size + 1, mapfile);
 
