@@ -1,4 +1,5 @@
 #include "movement.h"
+#include "draw.h"
 
 #define STATUS_SIZE 2
 
@@ -91,23 +92,14 @@ int input_handler(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
   return 1;
 }
 
-void draw(struct actor * jef, WINDOW * main_w, WINDOW * statusline) {
-  mvwaddch(main_w, jef->z, jef->x, '@');
-  box(main_w, 0, 0);
-  box(statusline, 0, 0);
-
-  wrefresh(main_w);
-  wrefresh(statusline);
-}
-
 int main()
 {
     int term_y, term_x, new_y, new_x;
     int s;
     int ch = '\0';
     struct actor jef;
-    jef.z = 4;
-    jef.x = 4;
+    jef.z = 127;
+    jef.x = 127;
 
     // curses initialization
     initscr();

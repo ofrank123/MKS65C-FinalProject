@@ -1,3 +1,6 @@
+#ifndef MOVEMENT_H
+#define MOVEMENT_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -14,7 +17,7 @@
 
 struct actor
 {
-    int row, col;
+  int x, y, z;
 };
 
 int valid_pos(struct actor *);
@@ -22,3 +25,5 @@ int valid_pos(struct actor *);
 int mv_actor(int mv, struct actor *);
 
 int dkey(int ch);
+
+#endif
