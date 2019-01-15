@@ -35,7 +35,7 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     
     // find the viewport's real coords (on map)
     int view_z = pl->z - (field_z) / 2 + 1;
-    int view_x = pl->x - (field_x) / 2;
+    int view_x = pl->x - (field_x) / 2 + 1;
 
     // check for edge cases (haha pun)
     // z edges
