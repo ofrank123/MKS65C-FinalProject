@@ -68,6 +68,8 @@ int main()
                 wrefresh(field);
             }
         }
+        mvwprintw(statusline, 1, 1, "X: %i, Z: %i", jef.x, jef.z);
+        wrefresh(statusline);
         running = input_handler(&jef, main_map, field, statusline);
         draw(&jef, main_map, field, statusline);
     }
