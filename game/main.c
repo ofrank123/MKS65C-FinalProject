@@ -26,8 +26,7 @@ int main()
 
     struct otherplayer opl;
 
-    struct diff movediff;
-    movediff.type = DIFF_PLAYERMV;
+    struct diff in_diff;
 
     setlocale(LC_ALL, "");
 
@@ -35,6 +34,8 @@ int main()
     mkfifo("h2g", 0644);
     printf("waiting for guest....\n");
     int write_pipe = open("h2g", O_WRONLY);
+    int read_pipe  = open("g2h", O_RDONLY | O_NONBLOCK);
+
     printf("host2guest pipe opened....\n");
 
     // import map
@@ -109,6 +110,8 @@ int main()
         // write(write_pipe, &movediff, sizeof(struct diff));
 
         // receive diffs here, in theory
+        while((res = read(read_pipe, &in_diff, sizeof(struct diff))) != -1)
+            process_diff(&in_diff, main_map, &opl);
 
         if(ch != ERR)
             running = input_handler(&jef, main_map, field, statusline, ch,

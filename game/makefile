@@ -23,4 +23,7 @@ run: a.out
 	./a.out
 
 clean:
-	rm a.out *.o
+	rm a.out
+	rm *.o
+	rm host guest
+	rm h2g g2h

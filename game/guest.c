@@ -32,7 +32,8 @@ int main()
 
     mkfifo("g2h", 0644);
     mkfifo("h2g", 0644);
-    int read_pipe = open("h2g", O_RDONLY);
+    int read_pipe  = open("h2g", O_RDONLY);
+    int write_pipe = open("g2h", O_WRONLY);
 
     struct map *m = malloc(sizeof(struct map));
     m->x_size = 256;
@@ -112,7 +113,7 @@ int main()
             process_diff(&in_diff, m, &opl);
 
         if(ch != ERR)
-            running = input_handler(&jef, m, field, statusline, ch, 0);
+            running = input_handler(&jef, m, field, statusline, ch, write_pipe);
         draw(&jef, m, &opl, field, statusline);
 
         // // // PIPE WRITING // // 
