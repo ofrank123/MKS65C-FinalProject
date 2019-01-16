@@ -14,6 +14,7 @@ int main()
     jef.z = 100;
     jef.x = 100;
     jef.y = 4;
+    jef.blocks = 32;
     jef.view_y = 4;
     jef.mode = MODE_MOVE;
 

@@ -9,6 +9,7 @@ struct actor
     int  x, y, z;
     int view_y;
     char mode;
+    int blocks;
     int cursor_x, cursor_z;
 };
 

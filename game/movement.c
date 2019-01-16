@@ -151,14 +151,16 @@ int build_tile(struct actor *pl, struct map *m)
     // break block
     if(*target_block == '1') {
         *target_block = '0';
+        ++(pl->blocks);
         return 1;
     }
     // place block
-    if(*target_block == '0') {
+    if(*target_block == '0' && pl->blocks > 0) {
         *target_block = '1';
+        --(pl->blocks);
         return -1;
     }
-    return 0;
+    return 0; // what is this doing?
 }
 
 // I guess this just compiles into a lookup table so it's pretty alright
@@ -233,8 +235,9 @@ int input_handler(struct actor *jef, struct map *m,
         if(jef->mode == MODE_MOVE) {
             wclear(statusline);
             mvwprintw(statusline, 1, 1,
-                    "[MOVE %+i]  X:%i Y:%i Z:%i MapVal:%i",
+                    "[MOVE %+i]  Inv:%i X:%i Y:%i Z:%i MapVal:%i",
                     (jef->y - jef->view_y), // view level difference
+                    jef->blocks,            // blocks ie inventory
                     jef->x, jef->y, jef->z, // player coords
                     m->arr[jef->y][jef->z][jef->x]); // value there
 
@@ -243,8 +246,9 @@ int input_handler(struct actor *jef, struct map *m,
             real_cx = jef->cursor_x + jef->x; // real cursor x
             wclear(statusline);
             mvwprintw(statusline, 1, 1,
-                    "[BUILD %+i] X:%i Y:%i Z:%i MapVal:%i",
+                    "[BUILD %+i] Inv:%i X:%i Y:%i Z:%i MapVal:%i",
                     (jef->y - jef->view_y),   // view level difference
+                    jef->blocks,              // blocks
                     real_cx, jef->view_y, real_cz,  // cursor x,y,z
                     m->arr[jef->view_y][real_cz][real_cx]);  //value there
         }
