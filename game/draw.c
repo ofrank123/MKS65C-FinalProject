@@ -118,8 +118,8 @@ void draw_map(struct actor *pl, struct map *m, struct otherplayer *opl,
 
     // draw the otherplayer if they're on screen
     if(opl->y == pl->view_y
-        // && opl->x >= view_x && opl->x < view_x + field_x
-        // && opl->z >= view_z && opl->z < view_z + field_z
+        && opl->x >= view_x && opl->x < view_x + field_x
+        && opl->z >= view_z && opl->z < view_z + field_z
         ) {         // cursed trailing delimiter returns
         mvaddch((opl->z - view_z), (opl->x - view_x), '@');
     }

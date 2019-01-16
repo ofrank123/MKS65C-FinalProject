@@ -254,7 +254,14 @@ int input_handler(struct actor *jef, struct map *m,
                     (jef->y - jef->view_y), // view level difference
                     jef->blocks,            // blocks ie inventory
                     jef->x, jef->y, jef->z, // player coords
-                    m->arr[jef->y][jef->z][jef->x]); // value there
+                    m->arr[jef->y][jef->z][jef->x]) // value there
+                    ;
+            struct diff mdiff;
+            mdiff.type = DIFF_PLAYERMV;
+            mdiff.x = jef->x;
+            mdiff.y = jef->y;
+            mdiff.z = jef->z;
+            write(sd, &mdiff, sizeof(struct diff));
 
         } else if(jef->mode == MODE_BUILD) {
             real_cz = jef->cursor_z + jef->z; // real cursor z
@@ -265,7 +272,8 @@ int input_handler(struct actor *jef, struct map *m,
                     (jef->y - jef->view_y),   // view level difference
                     jef->blocks,              // blocks
                     real_cx, jef->view_y, real_cz,  // cursor x,y,z
-                    m->arr[jef->view_y][real_cz][real_cx]);  //value there
+                    m->arr[jef->view_y][real_cz][real_cx])  //value there
+                    ;
         }
     }
     else if(ch == 27) {

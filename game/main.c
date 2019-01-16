@@ -113,21 +113,11 @@ int main()
         while((res = read(read_pipe, &in_diff, sizeof(struct diff))) != -1)
             process_diff(&in_diff, main_map, &opl);
 
+        // main input
         if(ch != ERR)
             running = input_handler(&jef, main_map, field, statusline, ch,
                             write_pipe);
         draw(&jef, main_map, &opl, field, statusline);
-
-        // // PIPE WRITING // // 
-        // def_prog_mode();
-        // endwin();
-
-        // char buf[16];
-        // strcpy(buf, "test\n");
-        // write(write_pipe, (void *) buf, 6);
-
-        // reset_prog_mode();
-        // refresh();
     }
 
     // curses is done

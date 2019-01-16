@@ -106,26 +106,14 @@ int main()
             }
         } // end resize windows
 
-        // send diffs
-
         // receive diffs here, in theory
         while((res = read(read_pipe, &in_diff, sizeof(struct diff))) != -1)
             process_diff(&in_diff, m, &opl);
 
+        // main input/redraw loop
         if(ch != ERR)
             running = input_handler(&jef, m, field, statusline, ch, write_pipe);
         draw(&jef, m, &opl, field, statusline);
-
-        // // // PIPE WRITING // // 
-        // // def_prog_mode();
-        // // endwin();
-
-        // // char buf[16];
-        // // strcpy(buf, "test\n");
-        // // write(write_pipe, (void *) buf, 6);
-
-        // // reset_prog_mode();
-        // // refresh();
     }
 
     // curses is done
