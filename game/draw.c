@@ -121,7 +121,7 @@ void draw_map(struct actor *pl, struct map *m, struct otherplayer *opl,
         && opl->x >= view_x && opl->x < view_x + field_x
         && opl->z >= view_z && opl->z < view_z + field_z
         ) {         // cursed trailing delimiter returns
-        mvaddch((opl->z - view_z), (opl->x - view_x), '@');
+        mvwaddch(field, (opl->z - view_z), (opl->x - view_x), '@');
     }
 
     // draw the player, if we're not on a different layer

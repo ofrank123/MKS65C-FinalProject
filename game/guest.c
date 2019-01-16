@@ -48,8 +48,8 @@ int main()
         for(z = 0; z < m->z_size; ++z) {
             m->arr[y][z] = malloc(sizeof(char) * m->x_size);
             res = read(read_pipe, m->arr[y][z], sizeof(char) * m->x_size);
-            printf("received row [%i][%i], %i bytes, received.\n", y, z, res);
         }
+        printf("received depth [%i]\n", y);
     }
     close(read_pipe);
     read_pipe = open("h2g", O_RDONLY | O_NONBLOCK);

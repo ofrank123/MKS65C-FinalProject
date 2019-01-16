@@ -25,6 +25,9 @@ int main()
     jef.mode = MODE_MOVE;
 
     struct otherplayer opl;
+    opl.x = 101;
+    opl.y = 4;
+    opl.z = 101;
 
     struct diff in_diff;
 
@@ -48,8 +51,8 @@ int main()
         for(z = 0; z < main_map->z_size; ++z) {
             res = write(write_pipe, main_map->arr[y][z],
                     sizeof(char) * (main_map->x_size));
-            printf("transmitted row [%i][%i], %i bytes sent.\n", y, z, res);
         }
+        printf("transmitted depth [%i]\n", y);
     }
     printf("map transmitted.\n");
 
