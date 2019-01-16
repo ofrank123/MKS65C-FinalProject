@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ncurses.h>
+#include "comms.h"
 #include "player.h"
 #include "map.h"
 
@@ -34,7 +35,7 @@ void enter_build(struct actor *);
 
 void enter_move (struct actor *);
 
-int build_tile(struct actor *, struct map *);
+void build_tile(struct actor *, struct map *);
 
 int dkey(int ch);
 

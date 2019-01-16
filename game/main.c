@@ -1,7 +1,11 @@
 #include <locale.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #include "movement.h"
 #include "draw.h"
 #include "player.h"
+#include "comms.h"
 
 #define _XOPEN_SOURCE_EXTENDED 1
 
@@ -19,7 +23,7 @@ int main()
     jef.mode = MODE_MOVE;
 
     setlocale(LC_ALL, "");
-
+    
     // curses initialization
     initscr();
     raw();
@@ -38,8 +42,6 @@ int main()
     struct map *main_map = read_map("map.map");
 
     // some initial output
-    wprintw(field, "LINES: %d XS: %d", term_x, term_y);
-    mvwprintw(statusline, 0, 0, "initialized");
     box(field, 0, 0);
     box(statusline, 0, 0);
     draw_map(&jef, main_map, field);
@@ -71,9 +73,19 @@ int main()
                                 term_x, term_y);
                 wrefresh(field);
             }
-        }
+        } // end resize windows
+
+        // receive diffs here, in theory
+
         running = input_handler(&jef, main_map, field, statusline);
         draw(&jef, main_map, field, statusline);
+
+        // this stuff (send_locdiff) just doesn't work
+        def_prog_mode();
+        endwin();
+        send_locdiff(test_outfile, &jef);
+        reset_prog_mode();
+        refresh();
     }
 
     // curses is done

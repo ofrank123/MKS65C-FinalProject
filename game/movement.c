@@ -123,6 +123,7 @@ int mv_cursor(int mv, struct actor *actor, struct map *m)
         actor->cursor_z = b_z;
         actor->cursor_x = b_x;
     }
+    // SEND DIFF
     return s;
 }
 
@@ -140,7 +141,7 @@ void enter_move(struct actor *pl)
     curs_set(0);
 }
 
-int build_tile(struct actor *pl, struct map *m)
+void build_tile(struct actor *pl, struct map *m)
 {
     // "real" cursor coords
     int real_cz = pl->cursor_z + pl->z;
@@ -152,15 +153,15 @@ int build_tile(struct actor *pl, struct map *m)
     if(*target_block == '1') {
         *target_block = '0';
         ++(pl->blocks);
-        return 1;
+        // (send diff)
+        
     }
     // place block
-    if(*target_block == '0' && pl->blocks > 0) {
+    else if(*target_block == '0' && pl->blocks > 0) {
         *target_block = '1';
         --(pl->blocks);
-        return -1;
+        // (send diff)
     }
-    return 0; // what is this doing?
 }
 
 // I guess this just compiles into a lookup table so it's pretty alright
