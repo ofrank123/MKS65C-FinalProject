@@ -10,4 +10,6 @@ void draw(struct actor *player, struct map *m,
 
 // draw map to main window
 void draw_map(struct actor *player, struct map *m, WINDOW *field);
+
+int air_neighbors(struct map * m, int x, int y, int z);
 #endif
