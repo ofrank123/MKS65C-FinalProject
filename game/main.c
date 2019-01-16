@@ -35,7 +35,7 @@ int main()
     refresh(); // let's not make that mistake again
 
     // import map
-    struct map *main_map = read_map("map.m");
+    struct map *main_map = read_map("map.map");
 
     // some initial output
     wprintw(field, "LINES: %d XS: %d", term_x, term_y);
@@ -77,7 +77,7 @@ int main()
     }
 
     // curses is done
-    save_map(main_map, "map.m");
+    save_map(main_map, "map.map");
     free_map(main_map);
     endwin();
     return 0;
