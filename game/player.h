@@ -13,4 +13,9 @@ struct actor
     int cursor_x, cursor_z;
 };
 
+struct otherplayer
+{
+    int x, y, z;
+};
+
 #endif 

@@ -1,9 +1,7 @@
 #include "draw.h"
-#include <wchar.h>
-#include "blocks.h"
 
 //Draw windows
-void draw(struct actor *player, struct map *m,
+void draw(struct actor *player, struct map *m, struct otherplayer *opl,
           WINDOW *main_w, WINDOW *statusline)
 {
     int field_z, field_x;
@@ -11,11 +9,7 @@ void draw(struct actor *player, struct map *m,
 
     box(main_w, 0, 0);
     box(statusline, 0, 0);
-    draw_map(player, m, main_w);
-
-
-    //mvwaddch(main_w, player->z, player->x, '@');
-    //mvwaddch(main_w, (field_z / 2), (field_x / 2), '@');
+    draw_map(player, m, opl, main_w);
 
     wrefresh(statusline);
     wrefresh(main_w);
@@ -73,7 +67,8 @@ int air_neighbors(struct map * m, int x, int y, int z) {
 }
 
 // draw map to main window, centered around player (doesn't refresh)
-void draw_map(struct actor *pl, struct map *m, WINDOW *field)
+void draw_map(struct actor *pl, struct map *m, struct otherplayer *opl,
+        WINDOW *field)
 {
 
     int field_z, field_x;
@@ -121,11 +116,20 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
         }
     }
 
+    // draw the otherplayer if they're on screen
+    if(opl->y == pl->view_y
+        && opl->x >= view_x && opl->x < view_x + field_x
+        && opl->z >= view_z && opl->z < view_z + field_z
+        ) {         // cursed trailing delimiter returns
+        mvaddch((opl->z - view_z), (opl->x - view_x), '@');
+
+    }
+
     // draw the player, if we're not on a different layer
     if(pl->view_y == pl->y)
         mvwaddstr(field, pl_z, pl_x, "\xe2\x98\xba");
 
-    // draw the cursor if we're in build mode
+    // move the cursor if we're in build mode
     if(pl->mode == MODE_BUILD)
         wmove(field, (pl_z + pl->cursor_z), (pl_x + pl->cursor_x));
 
