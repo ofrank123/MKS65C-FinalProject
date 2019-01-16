@@ -68,7 +68,8 @@ int mv_actor(int mv, struct actor *actor, struct map *m)
         if(actor->view_y == actor->y)
             (actor->view_y)++;
         (actor->y)++;
-      }
+   
+   }
     }
     if(!within_limits(actor, m)) {
       s = 1;
@@ -123,7 +124,14 @@ int mv_cursor(int mv, struct actor *actor, struct map *m)
         actor->cursor_z = b_z;
         actor->cursor_x = b_x;
     }
-    // SEND DIFF
+    if(!((actor->cursor_z + actor->z) > 0
+         && (actor->cursor_x + actor->x) > 0
+         && (actor->cursor_z + actor->z) < m->z_size - 1
+         && (actor->cursor_x + actor->x) < m->x_size - 1)) {
+      s = 1;
+      actor->cursor_z = b_z;
+      actor->cursor_x = b_x;
+    }
     return s;
 }
 
@@ -192,7 +200,7 @@ int within_limits(struct actor *actor, struct map *m)
     actor->z > 0
     && actor->x >= 0
     && actor->y > 0
-    && actor->z <= m->z_size - 1
+    && actor->z <= m->z_size - 2
     && actor->x <= m->x_size - 1
     && actor->y <= m->y_size - 1
     ;
