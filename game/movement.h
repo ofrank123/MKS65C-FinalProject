@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ncurses.h>
-#include "comms.h"
 #include "player.h"
 #include "map.h"
 

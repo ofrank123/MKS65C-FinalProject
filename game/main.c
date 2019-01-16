@@ -5,7 +5,7 @@
 #include "movement.h"
 #include "draw.h"
 #include "player.h"
-#include "comms.h"
+
 
 #define _XOPEN_SOURCE_EXTENDED 1
 
@@ -23,7 +23,7 @@ int main()
     jef.mode = MODE_MOVE;
 
     setlocale(LC_ALL, "");
-    
+
     // curses initialization
     initscr();
     raw();
@@ -83,7 +83,9 @@ int main()
         // this stuff (send_locdiff) just doesn't work
         def_prog_mode();
         endwin();
-        send_locdiff(test_outfile, &jef);
+
+
+
         reset_prog_mode();
         refresh();
     }
