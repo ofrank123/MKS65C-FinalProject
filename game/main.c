@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include "movement.h"
+#include "networking.h"
 #include "draw.h"
 #include "diff.h"
 #include "player.h"
@@ -12,6 +13,7 @@
 
 int main()
 {
+
     int term_y, term_x, new_y, new_x;
     int res;
     int s;
@@ -33,11 +35,13 @@ int main()
 
     setlocale(LC_ALL, "");
 
-    mkfifo("g2h", 0644);
-    mkfifo("h2g", 0644);
-    printf("waiting for guest....\n");
-    int write_pipe = open("h2g", O_WRONLY);
-    int read_pipe  = open("g2h", O_RDONLY | O_NONBLOCK);
+    int listen_socket;
+    listen_socket = server_setup();
+
+    int client_socket = server_connect(listen_socket);
+
+    int write_pipe = client_socket;
+    int read_pipe  = client_socket;
 
     printf("host2guest pipe opened....\n");
 
@@ -56,6 +60,12 @@ int main()
     }
     printf("map transmitted.\n");
 
+    // make the socket non-blocking
+    int flags = fcntl(client_socket, F_GETFL, 0);
+    flags |= O_NONBLOCK;
+    fcntl(client_socket, F_SETFL, flags);
+
+    sleep(1);
 
     // curses initialization
     initscr();
@@ -63,12 +73,12 @@ int main()
     keypad(stdscr, TRUE);
     noecho();
     curs_set(0);
-    nodelay(stdscr, TRUE);
 
     // initialize windows
     getmaxyx(stdscr, term_y, term_x);
     WINDOW *field = newwin((term_y - 3), term_x, 0, 0);
     WINDOW *statusline = newwin(3, term_x, (term_y - 3), 0);
+    nodelay(field, TRUE);
     refresh(); // let's not make that mistake again
 
     // some initial output
@@ -106,12 +116,6 @@ int main()
             }
         } // end resize windows
 
-        // // send diffs here
-        // movediff.x = jef.x;
-        // movediff.y = jef.y;
-        // movediff.z = jef.z;
-        // write(write_pipe, &movediff, sizeof(struct diff));
-
         // receive diffs here, in theory
         while((res = read(read_pipe, &in_diff, sizeof(struct diff))) != -1)
             process_diff(&in_diff, main_map, &opl);
@@ -124,6 +128,7 @@ int main()
     }
 
     // curses is done
+    close(client_socket);
     save_map(main_map, "map.map");
     free_map(main_map);
     endwin();

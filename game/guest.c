@@ -2,6 +2,7 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include "networking.h"
 #include "movement.h"
 #include "draw.h"
 #include "diff.h"
@@ -30,10 +31,11 @@ int main()
     opl.x = 110;
     opl.y = 4;
 
-    mkfifo("g2h", 0644);
-    mkfifo("h2g", 0644);
-    int read_pipe  = open("h2g", O_RDONLY);
-    int write_pipe = open("g2h", O_WRONLY);
+    int server_socket;
+    server_socket = client_setup(TEST_IP);
+
+    int read_pipe  = server_socket;
+    int write_pipe = server_socket;
 
     struct map *m = malloc(sizeof(struct map));
     m->x_size = 256;
@@ -51,8 +53,15 @@ int main()
         }
         printf("received depth [%i]\n", y);
     }
-    close(read_pipe);
-    read_pipe = open("h2g", O_RDONLY | O_NONBLOCK);
+    // close(read_pipe);
+    // read_pipe = open("h2g", O_RDONLY | O_NONBLOCK);
+
+    // make the socket non-blocking
+    int flags = fcntl(server_socket, F_GETFL, 0);
+    flags |= O_NONBLOCK;
+    fcntl(server_socket, F_SETFL, flags);
+
+    printf("map received. ready.\n");
 
     sleep(1);
 
@@ -68,6 +77,7 @@ int main()
     getmaxyx(stdscr, term_y, term_x);
     WINDOW *field = newwin((term_y - 3), term_x, 0, 0);
     WINDOW *statusline = newwin(3, term_x, (term_y - 3), 0);
+    nodelay(field, TRUE);
     refresh(); // let's not make that mistake again
 
     // some initial output
@@ -113,10 +123,12 @@ int main()
         // main input/redraw loop
         if(ch != ERR)
             running = input_handler(&jef, m, field, statusline, ch, write_pipe);
+
         draw(&jef, m, &opl, field, statusline);
     }
 
     // curses is done
+    close(server_socket);
     free_map(m);
     endwin();
 
