@@ -24,6 +24,10 @@ int main()
 
     setlocale(LC_ALL, "");
 
+    mkfifo("read", 0644);
+    mkfifo("write", 0644);
+    int write_pipe = open("write", O_WRONLY);
+
     // curses initialization
     initscr();
     raw();
@@ -84,7 +88,9 @@ int main()
         def_prog_mode();
         endwin();
 
-
+        char buf[16];
+        strcpy(buf, "test\n");
+        write(write_pipe, (void *) buf, 6);
 
         reset_prog_mode();
         refresh();
