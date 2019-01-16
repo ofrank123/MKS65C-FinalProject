@@ -10,7 +10,7 @@
 
 #define _XOPEN_SOURCE_EXTENDED 1
 
-int main()
+int main(int argc, char **argv)
 {
     int term_y, term_x, new_y, new_x;
     int s;
@@ -27,12 +27,15 @@ int main()
     setlocale(LC_ALL, "");
 
     struct otherplayer opl;
-    opl.z = 110;
-    opl.x = 110;
-    opl.y = 4;
+    opl.z = 0;
+    opl.x = 0;
+    opl.y = 1;
 
     int server_socket;
-    server_socket = client_setup(TEST_IP);
+    if(argc == 2)
+        server_socket = client_setup(argv[1]);
+    else
+        server_socket = client_setup(TEST_IP);
 
     int read_pipe  = server_socket;
     int write_pipe = server_socket;

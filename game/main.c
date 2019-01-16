@@ -27,9 +27,9 @@ int main()
     jef.mode = MODE_MOVE;
 
     struct otherplayer opl;
-    opl.x = 101;
-    opl.y = 4;
-    opl.z = 101;
+    opl.x = 0;
+    opl.y = 1;
+    opl.z = 0;
 
     struct diff in_diff;
 
