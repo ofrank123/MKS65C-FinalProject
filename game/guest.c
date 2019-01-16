@@ -1,18 +1,16 @@
 #include <locale.h>
+#include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
 #include "movement.h"
 #include "draw.h"
 #include "player.h"
-
 
 #define _XOPEN_SOURCE_EXTENDED 1
 
 int main()
 {
     int term_y, term_x, new_y, new_x;
-    int res;
     int s;
     int ch = '\0';
     struct actor jef;
@@ -23,31 +21,31 @@ int main()
     jef.view_y = 4;
     jef.mode = MODE_MOVE;
 
-    struct otherplayer opl;
-
     setlocale(LC_ALL, "");
 
+    struct otherplayer opl;
     mkfifo("g2h", 0644);
     mkfifo("h2g", 0644);
-    printf("waiting for guest....\n");
-    int write_pipe = open("h2g", O_WRONLY);
-    printf("host2guest pipe opened....\n");
+    int read_pipe = open("h2g", O_RDONLY);
 
-    // import map
-    struct map *main_map = read_map("map.map");
+    struct map *m = malloc(sizeof(struct map));
+    m->x_size = 256;
+    m->y_size = 10;
+    m->z_size = 256;
+    m->arr = malloc(sizeof(char **) * m->y_size);
 
-    printf("transmitting map....\n");
-    // SEND MAP
-    int y, z;
-    for(y = 0; y < main_map->y_size; ++y) {
-        for(z = 0; z < main_map->z_size; ++z) {
-            res = write(write_pipe, main_map->arr[y][z],
-                    sizeof(char) * (main_map->x_size));
-            printf("transmitted row [%i][%i], %i bytes sent.\n", y, z, res);
+    // RECEIVE MAP
+    int y, z, res;
+    for(y = 0; y < m->y_size; ++y) {
+        m->arr[y] = malloc(sizeof(char *) * m->z_size);
+        for(z = 0; z < m->z_size; ++z) {
+            m->arr[y][z] = malloc(sizeof(char) * m->x_size);
+            res = read(read_pipe, m->arr[y][z], sizeof(char) * m->x_size);
+            printf("received row [%i][%i], %i bytes, received.\n", y, z, res);
         }
     }
-    printf("map transmitted.\n");
 
+    sleep(1);
 
     // curses initialization
     initscr();
@@ -66,7 +64,7 @@ int main()
     // some initial output
     box(field, 0, 0);
     box(statusline, 0, 0);
-    draw_map(&jef, main_map, &opl, field);
+    draw_map(&jef, m, &opl, field);
     wrefresh(field);
     wrefresh(statusline);
 
@@ -77,6 +75,7 @@ int main()
         // resize windows (this needs to be compartmentalized)
         getmaxyx(stdscr, new_y, new_x);
         if(new_y != term_y || new_x != term_x) {
+            ch = wgetch(field);
             term_y = new_y;
             term_x = new_x;
             if(term_y >= 15 && term_x >= 60) {
@@ -98,27 +97,27 @@ int main()
             }
         } // end resize windows
 
-        // receive diffs here, in theory
+        // // receive diffs here, in theory
 
         if(ch != ERR)
-            running = input_handler(&jef, main_map, field, statusline, ch);
-        draw(&jef, main_map, &opl, field, statusline);
+            running = input_handler(&jef, m, field, statusline, ch);
+        draw(&jef, m, &opl, field, statusline);
 
-        // // PIPE WRITING // // 
-        // def_prog_mode();
-        // endwin();
+        // // // PIPE WRITING // // 
+        // // def_prog_mode();
+        // // endwin();
 
-        // char buf[16];
-        // strcpy(buf, "test\n");
-        // write(write_pipe, (void *) buf, 6);
+        // // char buf[16];
+        // // strcpy(buf, "test\n");
+        // // write(write_pipe, (void *) buf, 6);
 
-        // reset_prog_mode();
-        // refresh();
+        // // reset_prog_mode();
+        // // refresh();
     }
 
     // curses is done
-    save_map(main_map, "map.map");
-    free_map(main_map);
+    free_map(m);
     endwin();
+
     return 0;
 }

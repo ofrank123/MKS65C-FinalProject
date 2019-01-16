@@ -213,8 +213,7 @@ int cursor_dist(struct actor *pl)
 }
 
 int input_handler(struct actor *jef, struct map *m,
-                  WINDOW *main_w, WINDOW *statusline) {
-    int ch = wgetch(main_w);
+                  WINDOW *main_w, WINDOW *statusline, char ch) {
     int d, s;
     int real_cz, real_cx;
     if(d = dkey(ch)) {

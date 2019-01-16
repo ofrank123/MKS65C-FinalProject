@@ -39,6 +39,6 @@ void build_tile(struct actor *, struct map *);
 int dkey(int ch);
 
 int input_handler(struct actor *player, struct map *m,
-                  WINDOW *field, WINDOW *statusline);
+                  WINDOW *field, WINDOW *statusline, char ch);
 
 #endif

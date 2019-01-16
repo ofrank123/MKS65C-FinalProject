@@ -1,20 +1,24 @@
-all : main.o draw.o movement.o map.o player.h
-	gcc main.o draw.o movement.o map.o -lncursesw
+all : main.o guest.o draw.o movement.o map.o player.h
+	gcc -o host main.o draw.o movement.o map.o -lncursesw
+	gcc -o guest guest.o draw.o movement.o map.o -lncursesw
 
-main.o : main.c
+guest.o: guest.c
+	gcc -c guest.c
+
+main.o: main.c
 	gcc -c main.c
 
-draw.o : draw.c draw.h
+draw.o: draw.c draw.h
 	gcc -c draw.c
 
-movement.o : movement.c movement.h
+movement.o: movement.c movement.h
 	gcc -c movement.c
 
 map.o: map.c map.h
 	gcc -c map.c
 
-run : a.out
+run: a.out
 	./a.out
 
-clean :
+clean:
 	rm a.out *.o
