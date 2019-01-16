@@ -17,6 +17,8 @@ struct map
 
 void free_map(struct map *m);
 
+void save_map(struct map *m, char *filename);
+
 char **split(char *line, char *delims);
 
 struct map *read_map(char *filename);

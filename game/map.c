@@ -49,13 +49,13 @@ struct map *read_map(char *filename)
         map[y] = malloc(sizeof(char *) * z_size);
         // printf("beginning y layer %i\n", y);
         for(z = 0; z < z_size + 1; ++z) {
-            map[y][z] = malloc(sizeof(char) * x_size);
-            fgets(map[y][z], x_size + 1, mapfile);
+            map[y][z] = malloc(sizeof(char) * (x_size + 1));
+            fgets(map[y][z], x_size + 2, mapfile);
 
             // debug output
             // printf("x-row at [%i][%i]:\n\t<%s>\n", y, z, map[y][z]);
 
-            fgets(linebuf, 2, mapfile); // picks up the newline
+            //fgets(linebuf, 2, mapfile); // picks up the newline
         }
         fgets(linebuf, 3, mapfile); // picks up the dash and newline
     }
@@ -103,4 +103,22 @@ void free_map(struct map *m)
     free(m->arr);
     // printf("freed map array\n");
     free(m);
+}
+
+void save_map(struct map *m, char *filename)
+{
+    FILE *mapfile = fopen(filename, "w");
+    int y, z;
+    char dims[32];
+    sprintf(dims, "%i %i %i\n", m->x_size, m->y_size, m->z_size);
+    fputs(dims, mapfile);
+
+    for(y = 0; y < m->y_size; ++y) {
+        for(z = 0; z < m->z_size + 1; ++z) {
+            fputs(m->arr[y][z], mapfile);
+        }
+        fputs("-\n", mapfile);
+    }
+
+    fclose(mapfile);
 }
