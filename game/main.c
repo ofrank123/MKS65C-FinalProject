@@ -4,6 +4,7 @@
 #include <fcntl.h>
 #include "movement.h"
 #include "draw.h"
+#include "diff.h"
 #include "player.h"
 
 
@@ -24,6 +25,9 @@ int main()
     jef.mode = MODE_MOVE;
 
     struct otherplayer opl;
+
+    struct diff movediff;
+    movediff.type = DIFF_PLAYERMV;
 
     setlocale(LC_ALL, "");
 
@@ -98,10 +102,17 @@ int main()
             }
         } // end resize windows
 
+        // // send diffs here
+        // movediff.x = jef.x;
+        // movediff.y = jef.y;
+        // movediff.z = jef.z;
+        // write(write_pipe, &movediff, sizeof(struct diff));
+
         // receive diffs here, in theory
 
         if(ch != ERR)
-            running = input_handler(&jef, main_map, field, statusline, ch);
+            running = input_handler(&jef, main_map, field, statusline, ch,
+                            write_pipe);
         draw(&jef, main_map, &opl, field, statusline);
 
         // // PIPE WRITING // // 

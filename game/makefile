@@ -1,9 +1,11 @@
-all : main.o guest.o draw.o movement.o map.o player.h
-	gcc -o host main.o draw.o movement.o map.o -lncursesw
-	gcc -o guest guest.o draw.o movement.o map.o -lncursesw
+all : main.o guest.o diff.o draw.o movement.o map.o player.h
+	gcc -o host main.o diff.o draw.o movement.o map.o -lncursesw
+	gcc -o guest guest.o diff.o draw.o movement.o map.o -lncursesw
 
 guest.o: guest.c
 	gcc -c guest.c
+
+diff.o: diff.c diff.h
 
 main.o: main.c
 	gcc -c main.c

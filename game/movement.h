@@ -7,6 +7,7 @@
 #include <ncurses.h>
 #include "player.h"
 #include "map.h"
+#include "diff.h"
 
 #define KEY_MV_N	9
 #define KEY_MV_S	1
@@ -34,11 +35,11 @@ void enter_build(struct actor *);
 
 void enter_move (struct actor *);
 
-void build_tile(struct actor *, struct map *);
+void build_tile(struct actor *, struct map *, int sd);
 
 int dkey(int ch);
 
 int input_handler(struct actor *player, struct map *m,
-                  WINDOW *field, WINDOW *statusline, char ch);
+                  WINDOW *field, WINDOW *statusline, char ch, int sd);
 
 #endif

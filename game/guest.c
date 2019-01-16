@@ -4,6 +4,7 @@
 #include <sys/stat.h>
 #include "movement.h"
 #include "draw.h"
+#include "diff.h"
 #include "player.h"
 
 #define _XOPEN_SOURCE_EXTENDED 1
@@ -14,6 +15,7 @@ int main()
     int s;
     int ch = '\0';
     struct actor jef;
+    struct diff in_diff;
     jef.z = 100;
     jef.x = 100;
     jef.y = 4;
@@ -24,6 +26,10 @@ int main()
     setlocale(LC_ALL, "");
 
     struct otherplayer opl;
+    opl.z = 110;
+    opl.x = 110;
+    opl.y = 4;
+
     mkfifo("g2h", 0644);
     mkfifo("h2g", 0644);
     int read_pipe = open("h2g", O_RDONLY);
@@ -44,6 +50,8 @@ int main()
             printf("received row [%i][%i], %i bytes, received.\n", y, z, res);
         }
     }
+    close(read_pipe);
+    read_pipe = open("h2g", O_RDONLY | O_NONBLOCK);
 
     sleep(1);
 
@@ -97,10 +105,14 @@ int main()
             }
         } // end resize windows
 
-        // // receive diffs here, in theory
+        // send diffs
+
+        // receive diffs here, in theory
+        while((res = read(read_pipe, &in_diff, sizeof(struct diff))) != -1)
+            process_diff(&in_diff, m, &opl);
 
         if(ch != ERR)
-            running = input_handler(&jef, m, field, statusline, ch);
+            running = input_handler(&jef, m, field, statusline, ch, 0);
         draw(&jef, m, &opl, field, statusline);
 
         // // // PIPE WRITING // // 

@@ -149,11 +149,16 @@ void enter_move(struct actor *pl)
     curs_set(0);
 }
 
-void build_tile(struct actor *pl, struct map *m)
+void build_tile(struct actor *pl, struct map *m, int sd)
 {
     // "real" cursor coords
     int real_cz = pl->cursor_z + pl->z;
     int real_cx = pl->cursor_x + pl->x;
+
+    struct diff bdiff;
+    bdiff.x = real_cx;
+    bdiff.y = pl->view_y;
+    bdiff.z = real_cz;
 
     char *target_block = m->arr[pl->view_y][real_cz] + real_cx;
 
@@ -161,14 +166,16 @@ void build_tile(struct actor *pl, struct map *m)
     if(*target_block == '1') {
         *target_block = '0';
         ++(pl->blocks);
-        // (send diff)
+        bdiff.type = DIFF_BLOCKOFF;
+        write(sd, &bdiff, sizeof(struct diff));
         
     }
     // place block
     else if(*target_block == '0' && pl->blocks > 0) {
         *target_block = '1';
         --(pl->blocks);
-        // (send diff)
+        bdiff.type = DIFF_BLOCKON;
+        write(sd, &bdiff, sizeof(struct diff));
     }
 }
 
@@ -213,7 +220,7 @@ int cursor_dist(struct actor *pl)
 }
 
 int input_handler(struct actor *jef, struct map *m,
-                  WINDOW *main_w, WINDOW *statusline, char ch) {
+                  WINDOW *main_w, WINDOW *statusline, char ch, int sd) {
     int d, s;
     int real_cz, real_cx;
     if(d = dkey(ch)) {
@@ -230,7 +237,7 @@ int input_handler(struct actor *jef, struct map *m,
         else if(d == KEY_MMOVE)
             enter_move(jef);
         else if(d == KEY_MEDIT && jef->mode == MODE_BUILD)
-            build_tile(jef, m);
+            build_tile(jef, m, sd);
         else if(d == KEY_VUP) {
             if(jef->view_y > 0)
                 --(jef->view_y);
