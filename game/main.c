@@ -5,7 +5,7 @@
 #include "movement.h"
 #include "draw.h"
 #include "player.h"
-#include "comms.h"
+
 
 #define _XOPEN_SOURCE_EXTENDED 1
 
@@ -23,7 +23,11 @@ int main()
     jef.mode = MODE_MOVE;
 
     setlocale(LC_ALL, "");
-    
+
+    mkfifo("read", 0644);
+    mkfifo("write", 0644);
+    int write_pipe = open("write", O_WRONLY);
+
     // curses initialization
     initscr();
     raw();
@@ -83,7 +87,11 @@ int main()
         // this stuff (send_locdiff) just doesn't work
         def_prog_mode();
         endwin();
-        send_locdiff(test_outfile, &jef);
+
+        char buf[16];
+        strcpy(buf, "test\n");
+        write(write_pipe, (void *) buf, 6);
+
         reset_prog_mode();
         refresh();
     }
