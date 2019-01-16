@@ -186,7 +186,7 @@ int dkey(int ch)
 int within_limits(struct actor *actor, struct map *m)
 {
   return
-    actor->z >= 0
+    actor->z > 0
     && actor->x >= 0
     && actor->y > 0
     && actor->z <= m->z_size - 1

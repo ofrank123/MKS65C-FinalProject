@@ -1,5 +1,6 @@
 #include "draw.h"
 #include <wchar.h>
+#include "blocks.h"
 
 //Draw windows
 void draw(struct actor *player, struct map *m,
@@ -21,7 +22,54 @@ void draw(struct actor *player, struct map *m,
 }
 
 void draw_char(WINDOW * field, struct map * m, int dz, int dx, int x, int y, int z) {
-  mvwaddch(field, dz, dx, m->arr[y][z][x]);
+  char c[8];
+  if(m->arr[y][z][x] == '1') {
+    if(m->arr[y-1][z][x] == '0') {
+      if(air_neighbors(m, x, y, z)) {
+        strcpy(c, BLOCK_UP);
+      } else {
+        strcpy(c, BLOCK_ONEABOVE);
+      }
+    } else {
+      strcpy(c, BLOCK_SOLID);
+    }
+  }
+  else if(m->arr[y][z][x] == '0') {
+    if(m->arr[y+1][z][x] == '1') {
+      if(air_neighbors(m, x, y + 1, z)) {
+        strcpy(c, BLOCK_DOWN);
+      } else {
+        strcpy(c, BLOCK_FOOT);
+      }
+    } else if (m->arr[y+2][z][x] == '1') {
+      strcpy(c, BLOCK_UNDER);
+    } else {
+      strcpy(c, BLOCK_AIR);
+    }
+  }
+  mvwaddstr(field, dz, dx, c);
+}
+
+char neighbor_limits(struct map *m, int x, int z) {
+  return
+    z >= 1
+    && x >= 1
+    && z < m->z_size - 1
+    && z < m->x_size - 1
+    ;
+}
+
+int air_neighbors(struct map * m, int x, int y, int z) {
+  for(int cx = -1; cx <= 1; cx++) {
+    for(int cz = -1; cz <= 1; cz++) {
+      if(neighbor_limits(m, x + cx, z + cz)){
+        if(m->arr[y][z + cz][x + cx] == '0') {
+          return 1;
+        }
+      }
+    }
+  }
+  return 0;
 }
 
 // draw map to main window, centered around player (doesn't refresh)
@@ -37,7 +85,7 @@ void draw_map(struct actor *pl, struct map *m, WINDOW *field)
     int pl_z = field_z / 2;
     int pl_x = field_x / 2;
     // now that's what I call elegant coding
-    
+
     // find the viewport's real coords (on map)
     int view_z = pl->z - (field_z) / 2 + 1;
     int view_x = pl->x - (field_x) / 2 + 1;
