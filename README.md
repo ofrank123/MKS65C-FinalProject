@@ -1,5 +1,5 @@
 # OOFYCRAFT
-by Oliver Frank and Yoshia Ohno
+by Oliver Frank and Yoshiya Ohno
 
 ## Description
 A very janky sandbox game inspired by minecraft and dwarf fortress with multiplayer (co-op) support.
